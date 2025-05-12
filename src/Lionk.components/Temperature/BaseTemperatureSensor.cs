@@ -63,6 +63,33 @@ public abstract class BaseTemperatureSensor : BaseCyclicComponent, IMeasurableCo
     /// <inheritdoc/>
     public virtual void Measure() => NewValueAvailable?.Invoke(this, new MeasureEventArgs<double>(Measures));
 
+    /// <summary>
+    /// This method is used to set the temperature of the sensor.
+    /// </summary>
+    /// <param name="celsiusTemperature"> The value of the temperature in Celsius.</param>
+    public void SetTemperature(double celsiusTemperature)
+    {
+        double celsius = celsiusTemperature;
+        double fahrenheit = (celsiusTemperature * 9.0 / 5.0) + 32.0;
+        double kelvin = celsiusTemperature + 273.15;
+
+        Measures[(int)TemperatureType.Celsius] = new Measure<double>(
+            "Temperature",
+            DateTime.UtcNow,
+            TemperatureType.Celsius.GetUnit(),
+            celsius);
+        Measures[(int)TemperatureType.Fahrenheit] = new Measure<double>(
+            "Temperature",
+            DateTime.UtcNow,
+            TemperatureType.Fahrenheit.GetUnit(),
+            fahrenheit);
+        Measures[(int)TemperatureType.Kelvin] = new Measure<double>(
+            "Temperature",
+            DateTime.UtcNow,
+            TemperatureType.Kelvin.GetUnit(),
+            kelvin);
+    }
+
     /// <inheritdoc/>
     protected override void OnExecute(CancellationToken ct)
     {
@@ -75,5 +102,10 @@ public abstract class BaseTemperatureSensor : BaseCyclicComponent, IMeasurableCo
     {
         Period = TimeSpan.FromSeconds(5);
         base.OnInitialize();
+    }
+
+    public virtual void InitializeSubComponents(IComponentService? componentService = null)
+    {
+        return;
     }
 }
