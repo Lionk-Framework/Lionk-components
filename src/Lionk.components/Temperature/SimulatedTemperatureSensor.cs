@@ -68,17 +68,17 @@ public class SimulatedTemperatureSensor : BaseTemperatureSensor
         double kelvin = value + 273.15;
 
         Measures[(int)TemperatureType.Celsius] = new Measure<double>(
-            "Temperature",
+            TemperatureType.Celsius.GetUnit(),
             DateTime.UtcNow,
             TemperatureType.Celsius.GetUnit(),
             celsius);
         Measures[(int)TemperatureType.Fahrenheit] = new Measure<double>(
-            "Temperature",
+            TemperatureType.Fahrenheit.GetUnit(),
             DateTime.UtcNow,
             TemperatureType.Fahrenheit.GetUnit(),
             fahrenheit);
         Measures[(int)TemperatureType.Kelvin] = new Measure<double>(
-            "Temperature",
+            TemperatureType.Kelvin.GetUnit(),
             DateTime.UtcNow,
             TemperatureType.Kelvin.GetUnit(),
             kelvin);

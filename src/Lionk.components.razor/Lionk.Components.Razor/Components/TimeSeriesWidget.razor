@@ -1,3 +1,4 @@
+@using Lionk.Components.Razor.Components.Dialog
 @using Lionk.Components.Temperature
 @using Lionk.Core.View
 @using MudBlazor
@@ -11,32 +12,45 @@
 }
 else
 {
-    <MudChart ChartType="ChartType.Line"
-              XAxisLabels="@_xAxisLabels"
-              ChartSeries="@_seriesData"
-              @bind-SelectedIndex="_index"
-              ChartOptions="@_options" AxisChartOptions="_axisChartOptions"/>
+    <MudChart
+        @ref="_chart"
+        ChartType="ChartType.Line"
+        ChartSeries="@_seriesData"
+        @bind-SelectedIndex="_index"
+        ChartOptions="@_options"
+        AxisChartOptions="_axisChartOptions"
+        CanHideSeries
+        @onclick="ChartClicked"
+        Class="hover:mud-default-hover"
+        Width="100%"
+        Height="100%"/>
 }
-
 @code {
 
     [Parameter] public IMeasurableComponent<double>? Component { get; set; }
-    [Parameter] public int QueueSize { get; set; } = 100;
-    [Parameter] public TimeSpan RefreshInterval { get; set; } = TimeSpan.FromSeconds(2);
+    public int QueueSize { get; set; } = 100;
+    public TimeSpan RefreshInterval { get; set; } = TimeSpan.FromSeconds(2);
+    public int YTickInterval { get; set; } = 20;
+    public int YMaxNumValue { get; set; } = 100;
 
     private Dictionary<string, Queue<double>> _values = new();
 
 
     private string[] _xAxisLabels = Array.Empty<string>();
     private List<ChartSeries> _seriesData = new();
-    private ChartOptions _options = new ChartOptions();
+    private AxisChartOptions _axisChartOptions = new AxisChartOptions();
+    private ChartOptions _options = null!;
     private int _index = -1;
+
+    private System.Threading.Timer? _timer;
+    private MudChart _chart = null!;
 
     protected override void OnInitialized()
     {
         if (Component is not null)
         {
-            Component.NewValueAvailable += (sender, e) => OnNewValueAvailable();
+            _options = new ChartOptions();
+            _options.YAxisTicks = YTickInterval;
             foreach (var measure in Component.Measures)
             {
                 Queue<double> queue = new Queue<double>();
@@ -46,6 +60,12 @@ else
                     Name = measure.MeasureName,
                 });
             }
+            Component.NewValueAvailable += (sender, e) => OnNewValueAvailable();
+            _timer = new System.Threading.Timer(async _ =>
+            {
+                await InvokeAsync(UpdateSeriesData);
+                await InvokeAsync(StateHasChanged);
+            }, null, RefreshInterval, RefreshInterval);
         }
         base.OnInitialized();
     }
@@ -56,14 +76,48 @@ else
         {
             if (_values.TryGetValue(measure.MeasureName, out var queue))
             {
-                if (queue.Count >= QueueSize)
+                while (queue.Count >= QueueSize)
                 {
                     queue.Dequeue();
                 }
-
                 queue.Enqueue(measure.Value);
             }
         }
+    }
+
+    private void UpdateSeriesData()
+    {
+        for (int i = 0; i < _seriesData.Count; i++)
+        {
+            var series = _seriesData[i];
+            if (_values.TryGetValue(series.Name, out var queue))
+            {
+                series.Data = queue.ToArray();
+            }
+        }
+
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
+    }
+
+    private async Task ChartClicked()
+    {
+        var parameters = new DialogParameters<TimeSeriesConfigDialog>
+        {
+            { x => x.Widget, this },
+        };
+
+        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+
+        var dialogReference = await DialogService.ShowAsync<TimeSeriesConfigDialog>("Delete", parameters, options);
+        var result = await dialogReference.Result;
+
+        _timer?.Change(RefreshInterval, RefreshInterval);
+        _chart.ChartOptions.YAxisTicks = YTickInterval;
+        _chart.ChartOptions.MaxNumYAxisTicks = YMaxNumValue;
     }
 
 }

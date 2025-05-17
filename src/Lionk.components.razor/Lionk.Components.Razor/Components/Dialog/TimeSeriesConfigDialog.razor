@@ -1,0 +1,42 @@
+@using MudBlazor
+<MudDialog>
+    <TitleContent>
+        Dialog Title
+    </TitleContent>
+    <DialogContent>
+        <MudTextField T="int" Label="History Size" @bind-Value="Widget.QueueSize"></MudTextField>
+        <MudTextField T="int" Label="Refresh period" @bind-Value="RefreshInterval"></MudTextField>
+        <MudTextField T="int" Label="Y Tick Interval" @bind-Value="Widget.YTickInterval"></MudTextField>
+        <MudTextField T="int" Label="Y Max Lines" @bind-Value="Widget.YMaxNumValue"></MudTextField>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public TimeSeriesWidget Widget { get; set; } = null!;
+
+    private int RefreshInterval
+    {
+        get => (int) Widget.RefreshInterval.TotalSeconds;
+        set => Widget.RefreshInterval = TimeSpan.FromSeconds(value);
+    }
+
+    protected override void OnInitialized()
+    {
+        if (Widget is null)
+        {
+            throw new ArgumentNullException(nameof(Widget));
+        }
+
+        base.OnInitialized();
+    }
+
+    private void Submit() => MudDialog.Close(DialogResult.Ok(Widget));
+
+    private void Cancel() => MudDialog.Cancel();
+}
