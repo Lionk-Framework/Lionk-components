@@ -1,0 +1,69 @@
+@using Lionk.Components.Temperature
+@using Lionk.Core.View
+@using MudBlazor
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@attribute [ViewOfAttribute("Time series widget for measurable components", typeof(IMeasurableComponent<double>), typeof(TimeSeriesWidget), ViewContext.Widget)]
+
+@if (Component is null)
+{
+    <MudText Typo="Typo.body1" Class="text-center">No sensor found</MudText>
+}
+else
+{
+    <MudChart ChartType="ChartType.Line"
+              XAxisLabels="@_xAxisLabels"
+              ChartSeries="@_seriesData"
+              @bind-SelectedIndex="_index"
+              ChartOptions="@_options" AxisChartOptions="_axisChartOptions"/>
+}
+
+@code {
+
+    [Parameter] public IMeasurableComponent<double>? Component { get; set; }
+    [Parameter] public int QueueSize { get; set; } = 100;
+    [Parameter] public TimeSpan RefreshInterval { get; set; } = TimeSpan.FromSeconds(2);
+
+    private Dictionary<string, Queue<double>> _values = new();
+
+
+    private string[] _xAxisLabels = Array.Empty<string>();
+    private List<ChartSeries> _seriesData = new();
+    private ChartOptions _options = new ChartOptions();
+    private int _index = -1;
+
+    protected override void OnInitialized()
+    {
+        if (Component is not null)
+        {
+            Component.NewValueAvailable += (sender, e) => OnNewValueAvailable();
+            foreach (var measure in Component.Measures)
+            {
+                Queue<double> queue = new Queue<double>();
+                _values.TryAdd(measure.MeasureName, queue);
+                _seriesData.Add(new ChartSeries
+                {
+                    Name = measure.MeasureName,
+                });
+            }
+        }
+        base.OnInitialized();
+    }
+
+    private void OnNewValueAvailable()
+    {
+        foreach (var measure in Component?.Measures ?? [])
+        {
+            if (_values.TryGetValue(measure.MeasureName, out var queue))
+            {
+                if (queue.Count >= QueueSize)
+                {
+                    queue.Dequeue();
+                }
+
+                queue.Enqueue(measure.Value);
+            }
+        }
+    }
+
+}

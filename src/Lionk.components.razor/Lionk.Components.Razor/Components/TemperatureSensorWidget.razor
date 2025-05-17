@@ -4,7 +4,7 @@
 @using MudBlazor
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
-@attribute [ViewOfAttribute("Simple temperature widget", typeof(BaseTemperatureSensor), typeof(TemperatureSensorWidget), ViewContext.Widget)]
+@attribute [ViewOf("Simple temperature widget", typeof(BaseTemperatureSensor), typeof(TemperatureSensorWidget), ViewContext.Widget)]
 
 @if (Component is null)
 {

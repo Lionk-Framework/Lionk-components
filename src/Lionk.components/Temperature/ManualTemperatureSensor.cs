@@ -26,7 +26,6 @@ public class ManualTemperatureSensor : BaseTemperatureSensor
     /// </summary>
     public override void Measure()
     {
-        base.Measure();
         double celsius = Temperature;
         double fahrenheit = (Temperature * 9.0 / 5.0) + 32.0;
         double kelvin = Temperature + 273.15;
@@ -46,5 +45,6 @@ public class ManualTemperatureSensor : BaseTemperatureSensor
             DateTime.UtcNow,
             TemperatureType.Kelvin.GetUnit(),
             kelvin);
+        base.Measure();
     }
 }
