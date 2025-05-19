@@ -30,7 +30,6 @@ else
         if (Component is not null && Component is BaseTemperatureSensor sensor)
         {
             sensor.NewValueAvailable += (sender, e) => InvokeAsync(StateHasChanged);
-            sensor.InitializeSubComponents(ComponentService);
         }
     }
 

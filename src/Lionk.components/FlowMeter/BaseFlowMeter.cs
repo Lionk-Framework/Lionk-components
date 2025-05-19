@@ -11,13 +11,13 @@ namespace Lionk.Components.FlowMeter;
 /// This class is used to represent a flow meter.
 /// </summary>
 [NamedElement("Flow Meter", "This component is used to represent a flow meter")]
-public abstract class BaseFlowMeter : BaseComponent, IMeasurableComponent<float>
+public abstract class BaseFlowMeter : BaseComponent, IMeasurableComponent<double>
 {
 
     /// <summary>
     /// Event raised when a new value is available.
     /// </summary>
-    public event EventHandler<MeasureEventArgs<float>>? NewValueAvailable;
+    public event EventHandler<MeasureEventArgs<double>>? NewValueAvailable;
 
     public string? Unit { get; set; }
 
@@ -46,14 +46,14 @@ public abstract class BaseFlowMeter : BaseComponent, IMeasurableComponent<float>
     /// <summary>
     /// Gets or sets the measures of the component.
     /// </summary>
-    public virtual List<Measure<float>> Measures { get; set; } = new()
+    public virtual List<Measure<double>> Measures { get; set; } = new()
     {
-        new Measure<float>(FlowRateType.SpeedMin.ToString(), DateTime.UtcNow, FlowRateType.SpeedMin.GetUnit(), float.NaN),
-        new Measure<float>(FlowRateType.SpeedMax.ToString(), DateTime.UtcNow, FlowRateType.SpeedMax.GetUnit(), float.NaN),
-        new Measure<float>(FlowRateType.SpeedAverage.ToString(), DateTime.UtcNow, FlowRateType.SpeedAverage.GetUnit(), float.NaN),
-        new Measure<float>(FlowRateType.FlowRateMin.ToString(), DateTime.UtcNow, FlowRateType.FlowRateMin.GetUnit(), float.NaN),
-        new Measure<float>(FlowRateType.FlowRateMax.ToString(), DateTime.UtcNow, FlowRateType.FlowRateMax.GetUnit(), float.NaN),
-        new Measure<float>(FlowRateType.FlowRateAverage.ToString(), DateTime.UtcNow, FlowRateType.FlowRateAverage.GetUnit(), float.NaN)
+        new Measure<double>(FlowRateType.SpeedMin.ToString(), DateTime.UtcNow, FlowRateType.SpeedMin.GetUnit(), double.NaN),
+        new Measure<double>(FlowRateType.SpeedMax.ToString(), DateTime.UtcNow, FlowRateType.SpeedMax.GetUnit(), double.NaN),
+        new Measure<double>(FlowRateType.SpeedAverage.ToString(), DateTime.UtcNow, FlowRateType.SpeedAverage.GetUnit(), double.NaN),
+        new Measure<double>(FlowRateType.FlowRateMin.ToString(), DateTime.UtcNow, FlowRateType.FlowRateMin.GetUnit(), double.NaN),
+        new Measure<double>(FlowRateType.FlowRateMax.ToString(), DateTime.UtcNow, FlowRateType.FlowRateMax.GetUnit(), double.NaN),
+        new Measure<double>(FlowRateType.FlowRateAverage.ToString(), DateTime.UtcNow, FlowRateType.FlowRateAverage.GetUnit(), double.NaN)
 
     };
 
@@ -62,8 +62,10 @@ public abstract class BaseFlowMeter : BaseComponent, IMeasurableComponent<float>
     /// </summary>
     public virtual void Measure()
     {
-        var measureEventArgs = new MeasureEventArgs<float>(Measures);
+        var measureEventArgs = new MeasureEventArgs<double>(Measures);
         NewValueAvailable?.Invoke(this,measureEventArgs);
     }
 
+    /// <inheritdoc/>
+    public TimeSpan HistoryDuration { get; set; } = TimeSpan.FromDays(30);
 }

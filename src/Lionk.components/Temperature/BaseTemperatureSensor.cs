@@ -63,6 +63,8 @@ public abstract class BaseTemperatureSensor : BaseCyclicComponent, IMeasurableCo
     /// <inheritdoc/>
     public virtual void Measure() => NewValueAvailable?.Invoke(this, new MeasureEventArgs<double>(Measures));
 
+    public TimeSpan HistoryDuration { get; set; } = TimeSpan.FromDays(180);
+
     /// <summary>
     /// This method is used to set the temperature of the sensor.
     /// </summary>
@@ -104,8 +106,4 @@ public abstract class BaseTemperatureSensor : BaseCyclicComponent, IMeasurableCo
         base.OnInitialize();
     }
 
-    public virtual void InitializeSubComponents(IComponentService? componentService = null)
-    {
-        return;
-    }
 }
