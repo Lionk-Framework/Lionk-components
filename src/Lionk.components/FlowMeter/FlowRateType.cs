@@ -5,9 +5,10 @@ public enum FlowRateType
     SpeedMin,
     SpeedMax,
     SpeedAverage,
-    FlowRateMin,
-    FlowRateMax,
-    FlowRateAverage,
+    FlowMin,
+    FlowMax,
+    FlowAvg,
+    Consumption
 }
 
 public static class FlowRateTypeExtensions
@@ -19,9 +20,10 @@ public static class FlowRateTypeExtensions
             FlowRateType.SpeedMin => "Speed Min",
             FlowRateType.SpeedMax => "Speed Max",
             FlowRateType.SpeedAverage => "Speed Average",
-            FlowRateType.FlowRateMin => "Flow Rate Min",
-            FlowRateType.FlowRateMax => "Flow Rate Max",
-            FlowRateType.FlowRateAverage => "Flow Rate Average",
+            FlowRateType.FlowMin => "Flow Rate Min",
+            FlowRateType.FlowMax => "Flow Rate Max",
+            FlowRateType.FlowAvg => "Flow Rate Average",
+            FlowRateType.Consumption => "Consumption",
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
     }
@@ -33,9 +35,10 @@ public static class FlowRateTypeExtensions
             FlowRateType.SpeedMin => "m/s",
             FlowRateType.SpeedMax => "m/s",
             FlowRateType.SpeedAverage => "m/s",
-            FlowRateType.FlowRateMin => "L/s",
-            FlowRateType.FlowRateMax => "L/s",
-            FlowRateType.FlowRateAverage => "L/s",
+            FlowRateType.FlowMin => "L/m",
+            FlowRateType.FlowMax => "L/m",
+            FlowRateType.FlowAvg => "L/m",
+            FlowRateType.Consumption => "m3",
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
     }

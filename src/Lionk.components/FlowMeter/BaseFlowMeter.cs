@@ -51,10 +51,10 @@ public abstract class BaseFlowMeter : BaseComponent, IMeasurableComponent<double
         new Measure<double>(FlowRateType.SpeedMin.ToString(), DateTime.UtcNow, FlowRateType.SpeedMin.GetUnit(), double.NaN),
         new Measure<double>(FlowRateType.SpeedMax.ToString(), DateTime.UtcNow, FlowRateType.SpeedMax.GetUnit(), double.NaN),
         new Measure<double>(FlowRateType.SpeedAverage.ToString(), DateTime.UtcNow, FlowRateType.SpeedAverage.GetUnit(), double.NaN),
-        new Measure<double>(FlowRateType.FlowRateMin.ToString(), DateTime.UtcNow, FlowRateType.FlowRateMin.GetUnit(), double.NaN),
-        new Measure<double>(FlowRateType.FlowRateMax.ToString(), DateTime.UtcNow, FlowRateType.FlowRateMax.GetUnit(), double.NaN),
-        new Measure<double>(FlowRateType.FlowRateAverage.ToString(), DateTime.UtcNow, FlowRateType.FlowRateAverage.GetUnit(), double.NaN)
-
+        new Measure<double>(FlowRateType.FlowMin.ToString(), DateTime.UtcNow, FlowRateType.FlowMin.GetUnit(), double.NaN),
+        new Measure<double>(FlowRateType.FlowMax.ToString(), DateTime.UtcNow, FlowRateType.FlowMax.GetUnit(), double.NaN),
+        new Measure<double>(FlowRateType.FlowAvg.ToString(), DateTime.UtcNow, FlowRateType.FlowAvg.GetUnit(), double.NaN),
+        new Measure<double>(FlowRateType.Consumption.ToString(), DateTime.UtcNow, FlowRateType.Consumption.GetUnit(), double.NaN)
     };
 
     /// <summary>
